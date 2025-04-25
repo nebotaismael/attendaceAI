@@ -53,10 +53,10 @@ cipher_suite = Fernet(encryption_key)
 
 # Initialize Firebase
 try:
-    # Check if credentials are provided as JSON string in environment variable
+     # Check if credentials are provided as JSON string in environment variable
     cred_json = os.getenv('FIREBASE_CREDENTIALS_JSON')
     if cred_json:
-        import json
+        import json 
         cred_dict = json.loads(cred_json)
         cred = credentials.Certificate(cred_dict)
     else:

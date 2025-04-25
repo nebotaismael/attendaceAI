@@ -1,0 +1,11 @@
+cmake
+libsm6
+libxext6
+libxrender1
+libgl1-mesa-glx
+libopenblas-dev
+liblapack-dev
+libatlas-base-dev
+build-essential
+gfortran
+python3-dev

@@ -21,4 +21,4 @@ apt-get install -y --no-install-recommends \
 
 echo "[$(date)] Starting application server..."
 cd /home/site/wwwroot
-gunicorn --bind=0.0.0.0 --timeout 120 app:app
+gunicorn --bind=0.0.0.0 --timeout 120 application:app

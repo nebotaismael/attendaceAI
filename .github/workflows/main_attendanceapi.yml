@@ -88,4 +88,4 @@ jobs:
         with:
           app-name: 'AttendanceAPI'
           slot-name: 'Production'
-          startup-command: 'bash startup.sh'
+          startup-command: 'chmod +x startup.sh && bash startup.sh'

@@ -28,7 +28,7 @@ class Config:
     JWT_SECRET = os.getenv('JWT_SECRET', 'development_secret_key')
     JWT_EXPIRATION = 3600  # 1 hour
     # Firebase configuration
-    FIREBASE_CRED_PATH = os.getenv('FIREBASE_CREDENTIALS', 'firebase\\serviceAccountKey.json')
+    FIREBASE_CRED_PATH = os.getenv('FIREBASE_CREDENTIALS', 'path/to/credentials.json')
     # Authorized locations - would come from a database in production
     AUTHORIZED_LOCATIONS = {
         'office1': (40.7128, -74.0060),  # New York

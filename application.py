@@ -44,6 +44,7 @@ logger = logging.getLogger(__name__)
 app = Flask(__name__)
 # Add CORS support for production
 flask_cors.CORS(app)
+logger.info("Checking start")
 os.makedirs(Config.TEMP_FOLDER, exist_ok=True)
 
 # Initialize security

@@ -3,7 +3,7 @@ import argparse
 import os
 
 # Base URL of the local API
-default_url = os.getenv('API_URL', 'http://127.0.0.1:5000')
+default_url = os.getenv('API_URL', 'https://attendanceapi-brewc0fhdhfugwe3.canadacentral-01.azurewebsites.net')
 
 
 def login(username, password):

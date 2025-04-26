@@ -38,5 +38,9 @@ ENV/
 temp/*
 !temp/.gitkeep
 
+# New app_temp directory
+app_temp/*
+!app_temp/.gitkeep
+
 # Environment variables
 .env

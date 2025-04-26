@@ -1,5 +1,4 @@
 #!/bin/bash
-# filepath: e:\Files\powerub-master\AI Club\attendance_verification_system\startup.sh
 
 # Create logs for troubleshooting
 LOGDIR=/home/LogFiles
@@ -18,6 +17,10 @@ apt-get install -y --no-install-recommends \
     libxrender1 \
     libgl1 \
     libglib2.0-0 
+
+echo "[$(date)] Creating application temp directory..."
+mkdir -p /home/site/wwwroot/app_temp
+chmod 777 /home/site/wwwroot/app_temp
 
 echo "[$(date)] Starting application server..."
 cd /home/site/wwwroot

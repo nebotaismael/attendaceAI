@@ -24,7 +24,7 @@ class Config:
     FACE_MATCH_THRESHOLD = 0.4  # Lower is stricter
     LIVENESS_THRESHOLD = 0.92  # Higher is stricter
     ALLOWED_LOCATION_RADIUS = 100  # meters
-    TEMP_FOLDER = 'temp'
+    TEMP_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app_temp')
     JWT_SECRET = os.getenv('JWT_SECRET', 'development_secret_key')
     JWT_EXPIRATION = 3600  # 1 hour
     # Firebase configuration

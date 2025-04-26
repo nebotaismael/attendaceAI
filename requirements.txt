@@ -9,6 +9,6 @@ bcrypt==4.3.0
 python-dotenv==1.1.0
 opencv-python-headless==4.7.0.72
 numpy==1.24.3
-dlib==19.24.1
 mediapipe==0.10.5
 deepface==0.0.89
+tf-keras==2.19.0

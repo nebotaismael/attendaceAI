@@ -12,10 +12,9 @@ import cv2
 from deepface import DeepFace
 import flask_cors
 # Global variable for detector
-face_detector = None
-detector_backend = "retinaface"  # Can be: opencv, ssd, mtcnn, dlib, retinaface, mediapipe or yolov8
+detector_backend = "retinaface"  # Changed from dlib to retinaface
 # Anti-spoofing libraries
-import dlib
+# REMOVED: import dlib
 import mediapipe as mp
 # Storage
 import firebase_admin
@@ -73,20 +72,21 @@ except Exception as e:
     raise
 
 
-# Initialize face detection tools
-try:
-    face_detector = dlib.get_frontal_face_detector()  # type: dlib.fhog_object_detector
-except AttributeError:
-    # Fallback if type hint is incorrect for your dlib version
-    face_detector = dlib.get_frontal_face_detector()
+# Initialize face detection tools - REPLACED DLIB WITH MEDIAPIPE
+# Face detection with MediaPipe
+mp_face_detection = mp.solutions.face_detection
+face_detection = mp_face_detection.FaceDetection(
+    model_selection=1,  # 0 for close range, 1 for mid/long range
+    min_detection_confidence=0.5
+)
 
+# For face mesh (used in liveness check)
 mp_face_mesh = mp.solutions.face_mesh
 face_mesh = mp_face_mesh.FaceMesh(
     static_image_mode=True,
     max_num_faces=1,
     min_detection_confidence=0.5
 )
-
 
 
 # Security middleware
@@ -130,19 +130,37 @@ def read_image(file_path):
     image = cv2.imread(file_path)
     return image
 
+# REPLACED DLIB-BASED FACE DETECTION WITH MEDIAPIPE
 def detect_faces(image):
-    """Detect faces in an image using dlib"""
-    gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-    faces = face_detector(gray)
-    return faces, gray
+    """Detect faces in an image using MediaPipe"""
+    # Convert to RGB (MediaPipe requires RGB)
+    rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+    results = face_detection.process(rgb_image)
+    faces = []
+    
+    if results.detections:
+        h, w, _ = image.shape
+        for detection in results.detections:
+            # Extract bounding box
+            bbox = detection.location_data.relative_bounding_box
+            x, y = int(bbox.xmin * w), int(bbox.ymin * h)
+            width, height = int(bbox.width * w), int(bbox.height * h)
+            
+            # Store face as x1, y1, x2, y2 format (like dlib rect)
+            faces.append((x, y, x + width, y + height))
+    
+    return faces, image
 
+# UPDATED TO WORK WITH NEW FACE DETECTION OUTPUT
 def extract_face_features(image, face_rect):
     """Extract face area and compute features"""
-    x1, y1, x2, y2 = face_rect.left(), face_rect.top(), face_rect.right(), face_rect.bottom()
+    x1, y1, x2, y2 = face_rect
     # Add padding to the face region
-    padding = int((x2 - x1) * 0.3)
-    face_img = image[max(0, y1-padding):min(image.shape[0], y2+padding),
-                     max(0, x1-padding):min(image.shape[1], x2+padding)]
+    h, w, _ = image.shape
+    padding_x = int((x2 - x1) * 0.3)
+    padding_y = int((y2 - y1) * 0.3)
+    face_img = image[max(0, y1-padding_y):min(h, y2+padding_y),
+                    max(0, x1-padding_x):min(w, x2+padding_x)]
     return face_img
 
 
@@ -403,14 +421,14 @@ def verify_attendance():
         if reference_image is None:
             return jsonify({'error': 'Failed to read reference image'}), 500
                     
-        # 6. Face comparison using DeepFace
+        # 6. Face comparison using DeepFace - UPDATED TO USE RETINAFACE INSTEAD OF DLIB
         try:
             result = DeepFace.verify(
                 face_img, 
                 reference_image,
                 model_name="VGG-Face",
                 enforce_detection=False,
-                detector_backend="dlib"
+                detector_backend=detector_backend  # Using retinaface or mediapipe instead of dlib
             )
             # Convert NumPy types to Python native types
             face_match = bool(result.get("verified", False))
@@ -536,7 +554,7 @@ def attendance_status():
         today_records = [doc.to_dict() for doc in today_query]
         
         # Get attendance history for specified number of days
-        history_start = datetime.combine(today - datetime.timedelta(days=days), datetime.min.time())
+        history_start = datetime.combine(today - timedelta(days=days), datetime.min.time())
         
         history_query = db.collection('attendance')\
             .where('user_id', '==', user_id)\

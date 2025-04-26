@@ -1,4 +1,5 @@
 #!/bin/bash
+# filepath: e:\Files\powerub-master\AI Club\attendance_verification_system\startup.sh
 
 # Create logs for troubleshooting
 LOGDIR=/home/LogFiles
@@ -12,28 +13,11 @@ echo "[$(date)] Installing system dependencies..."
 export DEBIAN_FRONTEND=noninteractive
 apt-get update
 apt-get install -y --no-install-recommends \
-    cmake \
     libsm6 \
     libxext6 \
     libxrender1 \
     libgl1 \
-    libglib2.0-0 \
-    build-essential \
-    gfortran \
-    git \
-    python3-dev
-
-echo "[$(date)] Checking if dlib is installed..."
-if python3 -c "import dlib" 2>/dev/null; then
-    echo "[$(date)] dlib is already installed"
-else
-    echo "[$(date)] Installing dlib..."
-    cd /home/site/wwwroot
-    # Try multiple methods to install dlib
-    pip install dlib --no-cache-dir --verbose || \
-    python3 install-dlib.py || \
-    echo "[$(date)] WARNING: Failed to install dlib"
-fi
+    libglib2.0-0 
 
 echo "[$(date)] Starting application server..."
 cd /home/site/wwwroot

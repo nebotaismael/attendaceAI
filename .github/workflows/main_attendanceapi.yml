@@ -24,31 +24,26 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y --no-install-recommends \
-            cmake \
             libsm6 \
             libxext6 \
             libxrender1 \
             libgl1 \
             libglib2.0-0 \
-            build-essential \
-            gfortran \
-            python3-dev
 
       - name: Create and start virtual environment
         run: |
           python -m venv venv
           source venv/bin/activate
 
-      - name: Install dependencies (without dlib)
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install wheel setuptools
-          pip install -r requirements-nodlib.txt
+          pip install -r requirements.txt
         
       - name: Prepare scripts
         run: |
           chmod +x startup.sh
-          chmod +x install-dlib.py
 
       - name: Zip artifact for deployment
         run: zip release.zip ./* -r
